@@ -1,0 +1,25 @@
+{
+  "Provider": "opennebula",
+  "CheckID": "network_vm_admin_access_restricted",
+  "CheckTitle": "Check copied VM security group rules against an explicit TCP administration source policy",
+  "CheckType": [],
+  "ServiceName": "Network and Secure Communications",
+  "SubServiceName": "",
+  "ResourceIdTemplate": "",
+  "Severity": "high",
+  "ResourceType": "VirtualMachineNetworkInterface",
+  "Description": "For explicitly configured running VM/NIC targets using VN_MAD=fw, evaluate the union of copied security group rules for selected TCP ports and approved IPv4 source CIDRs. Confirm SG propagation and consistency before evaluating.",
+  "Risk": "An applied permissive security group may allow administration access from sources outside the intended policy, even when another group is restrictive and the VNet uses private addresses.",
+  "RelatedUrl": "https://docs.opennebula.io/6.10/management_and_operations/network_management/security_groups.html",
+  "Remediation": {
+    "Code": {"CLI": "", "NativeIaC": "", "Other": "", "Terraform": ""},
+    "Recommendation": {
+      "Text": "Review every security group attached to the affected NIC. Remove or narrow permissions that allow the selected TCP ports outside the approved IPv4 sources. Confirm propagation, retain authorized administration access, and repeat both the audit and connection tests.",
+      "Url": "https://docs.opennebula.io/6.10/management_and_operations/network_management/security_groups.html"
+    }
+  },
+  "Categories": [],
+  "DependsOn": [],
+  "RelatedTo": [],
+  "Notes": "Prototype 0.1, tested against the selected integration API structure. Requires flat tfm_network_admin_policy configuration. MANUAL means not evaluable. PASS concerns the defined IPv4 permissions only, not service availability, Internet exposure, IPv6, attack detection or a complete network path. No resources are modified. NETWORK_ID-based source resolution and drivers other than fw are unsupported. Findings identify VM/NIC, applied groups, affected ports and a witness source outside policy."
+}
