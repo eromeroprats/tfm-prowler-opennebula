@@ -1,0 +1,8 @@
+# Flat format: the baseline provider/config loader has limitations with provider keys.
+# Only the VM/NIC targets listed here are evaluated by this check.
+tfm_network_admin_policy:
+  targets:
+    - vm_id: 2
+      nic_id: 0
+      tcp_ports: [22]
+      allowed_ipv4: ["172.16.100.1/32"]
