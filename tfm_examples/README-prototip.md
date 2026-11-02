@@ -10,9 +10,9 @@ El control network_vm_admin_access_restricted avalua els permisos d'entrada acum
 de seguretat d'una NIC, respecte d'una política externa d'orígens IPv4 i ports TCP.
 És un primer prototip, no una validació completa ni una eina de correcció automàtica.
 Un mateix control tracta permisos excessius i combinacions de grups permissives.
-No s'ha compromès un segon control independent.
+La selecció de controls addicionals es concretarà en les fases següents del projecte.
 
-## Evidències reals incloses
+## Comprovacions inicials
 
 Entorn registrat: Ubuntu 24.04.5 AArch64, OpenNebula 6.10.0.1 i Prowler 5.5.0.
 Servidor: VM 2, NIC 0, 172.16.100.4; client: 172.16.100.5.
@@ -25,51 +25,37 @@ Política: TCP/22 només des de 172.16.100.1/32.
 | Grups 0 i 100 | Nou | FAIL |
 | Retirada del grup 0 | Nou | PASS |
 
-Els informes originals CSV, JSON-OCSF i HTML són a evidencies/. Els CSV
-s'han comprovat abans d'empaquetar: control, estat i identificador del recurs nou.
-No s'han generat dades d'auditoria sintètiques per completar el lliurament.
-El PASS del control d'adreçament i el FAIL del nou corresponen a propietats diferents.
+La taula resumeix les execucions inicials fetes a l’entorn local. Els informes originals CSV, JSON-OCSF i HTML es conserven localment i no formen part d’aquest repositori. Els resultats i les limitacions de les comprovacions es descriuen a la memòria del segon lliurament. El PASS del control d’adreçament i el FAIL del nou control corresponen a propietats diferents.
 
 Els registres funcionals acrediten connexió TCP del client amb els grups combinats
 (codigo_nc=0), timeout amb el restrictiu (codigo_nc=1) i SSH administratiu correcte.
 La prova restrictiva es va fer abans de l'última restauració: després d'aquesta
 restauració només s'ha repetit l'auditoria, no la comprovació funcional.
 
-Al preparar aquest paquet s'han tornat a executar 35 proves automatitzades.
-El registre nou és evidencies/proves-automatitzades-exportacio.log. Aquestes proves
-utilitzen dades controlades i no són 35 experiments de xarxa reals.
-exportacio.json identifica les versions i les evidències incorporades.
+El repositori inclou trenta-cinc proves automatitzades de la política, l’avaluació de regles i l’adaptació de dades. Utilitzen dades controlades i no equivalen a trenta-cinc experiments amb trànsit real. Es poden executar sense disposar d’un entorn OpenNebula.
 
 ## Revisió sense desplegar OpenNebula
 
 Llegir el mòdul admin_access.py, les metadades, la política YAML i els tests.
-Els informes HTML permeten consultar les troballes amb un navegador local.
 Les regles del control no fan connexions de prova ni modifiquen recursos.
 
-## Instal·lació sobre la base reutilitzada
+## Preparació del repositori i execució de les proves
 
-Cal Python 3.10 o superior, Git i les dependències del repositori original.
-Des de la carpeta descomprimida, preparar una còpia separada del repositori:
-
-```bash
-git clone https://github.com/rontomano/TFM_prowler.git prowler-base
-git -C prowler-base checkout a3c65a77bb08b3614d476d5e39f4f51917ce387c
-python3 install.py --repo prowler-base --dry-run
-python3 install.py --repo prowler-base
-```
-
-L'instal·lador afegeix fitxers, comprova els hash i no substitueix fitxers diferents.
-Instal·lar les dependències de Prowler amb Poetry segons la seva documentació.
-Des de prowler-base, executar:
+Amb Git, una versió compatible de Python i Poetry instal·lats, es pot preparar l’entorn des de la branca del prototip:
 
 ```bash
+git clone --branch tfm-xarxa https://github.com/eromeroprats/tfm-prowler-opennebula.git
+cd tfm-prowler-opennebula
+poetry install
 poetry run python tests/providers/opennebula/services/network/test_admin_access.py
 ```
+
+El control ja està incorporat en aquesta branca i no requereix executar un instal·lador addicional.
 
 ## Auditoria en un entorn OpenNebula propi
 
 Adaptar tfm_examples/opennebula-admin-policy.yaml als identificadors, ports i orígens
-de l'entorn. El paquet no inclou credencials. Cal preparar el fitxer de credencials
+de l'entorn. El repositori no inclou credencials. Cal preparar el fitxer de credencials
 del proveïdor en una ubicació externa al repositori. Exemple d'execució:
 
 ```bash
